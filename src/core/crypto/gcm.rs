@@ -32,19 +32,33 @@ impl GhashTable {
     }
 
     #[inline(always)]
+    fn ct_select_row(&self, idx: usize) -> [u8; 16] {
+        let mut row = [0u8; 16];
+        for i in 0..16 {
+            let mask = ((i == idx) as u8).wrapping_neg();
+            for k in 0..16 {
+                row[k] |= self.table[i][k] & mask;
+            }
+        }
+        row
+    }
+
     fn mul(&self, x: &mut [u8; 16]) {
         let mut z = [0u8; 16];
         for i in 0..16 {
             let byte = x[i];
             let hi = (byte >> 4) as usize;
             let lo = (byte & 0x0f) as usize;
+
+            let hi_row = self.ct_select_row(hi);
             for k in 0..16 {
-                z[k] ^= self.table[hi][k];
+                z[k] ^= hi_row[k];
             }
             shift_right_4(&mut z);
 
+            let lo_row = self.ct_select_row(lo);
             for k in 0..16 {
-                z[k] ^= self.table[lo][k];
+                z[k] ^= lo_row[k];
             }
             if i < 15 {
                 shift_right_4(&mut z);

@@ -11,6 +11,7 @@ pub mod sha512;
 pub mod zeroize;
 
 pub use aes::Aes256;
+pub use ed25519::{public_key_from_seed, sign as ed25519_sign, verify as ed25519_verify, x25519, X25519_BASE_POINT};
 pub use gcm::Aes256Gcm;
 pub use hmac::{hmac_sha1, hmac_sha256, hmac_sha512};
 pub use p256::{generate_p256_keypair, sign_p256, verify_p256};

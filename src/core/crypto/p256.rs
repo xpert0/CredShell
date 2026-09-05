@@ -133,7 +133,7 @@ mod windows {
         }
 
         let mut reimport_blob = Vec::with_capacity(104);
-        reimport_blob.extend_from_slice(&0x32534345u32.to_le_bytes()); // "ECS2"
+        reimport_blob.extend_from_slice(&0x32534345u32.to_le_bytes());
         reimport_blob.extend_from_slice(&32u32.to_le_bytes());
         if pub_key.len() >= 64 {
             reimport_blob.extend_from_slice(&pub_key[0..64]);
@@ -203,7 +203,7 @@ mod windows {
         }
 
         let mut pub_blob = Vec::with_capacity(72);
-        pub_blob.extend_from_slice(&0x31534345u32.to_le_bytes()); // "ECS1"
+        pub_blob.extend_from_slice(&0x31534345u32.to_le_bytes());
         pub_blob.extend_from_slice(&32u32.to_le_bytes());
         pub_blob.extend_from_slice(&pub_key[0..64]);
 
@@ -577,15 +577,30 @@ pub mod pure_p256 {
             Self { x: x3, y: y3, z: z3 }
         }
 
+        pub fn ct_select(a: &Self, b: &Self, choice: u64) -> Self {
+            let mask = 0u64.wrapping_sub(choice & 1);
+            let select_u256 = |u1: &U256, u2: &U256| -> U256 {
+                let mut out = [0u64; 4];
+                for i in 0..4 {
+                    out[i] = (u1.0[i] & !mask) | (u2.0[i] & mask);
+                }
+                U256(out)
+            };
+            Self {
+                x: select_u256(&a.x, &b.x),
+                y: select_u256(&a.y, &b.y),
+                z: select_u256(&a.z, &b.z),
+            }
+        }
+
         pub fn scalar_mul(&self, k: &U256) -> Self {
             let mut r = Self::INFINITY;
             let mut base = *self;
             for i in 0..256 {
                 let limb = i / 64;
                 let bit = (k.0[limb] >> (i % 64)) & 1;
-                if bit == 1 {
-                    r = r.add(&base);
-                }
+                let sum = r.add(&base);
+                r = Self::ct_select(&r, &sum, bit);
                 base = base.double();
             }
             r

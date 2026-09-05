@@ -71,10 +71,8 @@ impl Aes256 {
         let mut state = [0u8; 16];
         state.copy_from_slice(block);
 
-        // AddRoundKey round 0
         self.add_round_key(&mut state, 0);
 
-        // Rounds 1 through 13
         for round in 1..14 {
             self.sub_bytes(&mut state);
             self.shift_rows(&mut state);
@@ -82,7 +80,6 @@ impl Aes256 {
             self.add_round_key(&mut state, round);
         }
 
-        // Final round 14
         self.sub_bytes(&mut state);
         self.shift_rows(&mut state);
         self.add_round_key(&mut state, 14);
