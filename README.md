@@ -1,8 +1,8 @@
-# Kernyx
+# CredShell
 
 **Local-First, Zero-Crate, Zero-Daemon TOTP & WebAuthn Passkey Authenticator**
 
-Kernyx is a high-security, high-performance vault authenticator written in pure Rust with **zero external dependencies** (`dependencies = []`). It provides an encrypted local vault for RFC 6238 TOTP two-factor codes and acts as a native WebAuthn Level 3 Passkey platform authenticator across any website and browser.
+CredShell is a high-security, high-performance vault authenticator written in pure Rust with **zero external dependencies** (`dependencies = []`). It provides an encrypted local vault for RFC 6238 TOTP two-factor codes and acts as a native WebAuthn Level 3 Passkey platform authenticator across any website and browser.
 
 ---
 
@@ -14,9 +14,9 @@ Kernyx is a high-security, high-performance vault authenticator written in pure 
   - **Key Derivation**: PBKDF2-HMAC-SHA-512 with 100,000 iterations and 128-bit cryptographic salts.
   - **Passkey Algorithms**: Dual-engine supporting **ES256** (NIST ECDSA P-256 via Windows CNG `bcrypt.dll`) and **EdDSA** (Ed25519) per RFC 8152 / RFC 9053.
   - **TOTP Engine**: RFC 6238 / RFC 4226 supporting HMAC-SHA-1, HMAC-SHA-256, and HMAC-SHA-512 with custom time steps and digit lengths.
-- **Zero-Daemon**: No background services or daemon processes left running in the background. Kernyx only runs when you execute a command or launch the passkey listener.
+- **Zero-Daemon**: No background services or daemon processes left running in the background. CredShell only runs when you execute a command or launch the passkey listener.
 - **Universal Passkey Support**: Intercepts passkey creation and sign-in attempts on all websites (Google, Apple, GitHub, Microsoft, Amazon, Twitter/X, Passkeys.io, WebAuthn.io, etc.) via the included browser extension.
-- **Multi-Vault Isolation**: Manage separate encrypted vaults with their own master passwords (e.g. `kernyx work.kbd ...` vs `kernyx personal.kbd ...`).
+- **Multi-Vault Isolation**: Manage separate encrypted vaults with their own master passwords (e.g. `credshell work.kbd ...` vs `credshell personal.kbd ...`).
 - **Encrypted Cross-Device Sync**: Synchronize vaults across devices on local networks or air-gapped setups using ephemeral key exchange and AES-256-GCM encrypted binary blobs.
 - **Atomic File Operations**: Prevents database corruption by staging saves in temporary files and committing atomically.
 
@@ -33,25 +33,25 @@ Kernyx is a high-security, high-performance vault authenticator written in pure 
 cargo build --release
 
 # The compiled binary is located at:
-.\target\release\kernyx.exe
+.\target\release\credshell.exe
 ```
 
 ---
 
 ## Browser Extension (WebAuthn / Passkey Bridge)
 
-To allow websites to use Kernyx as your platform passkey authenticator:
+To allow websites to use CredShell as your platform passkey authenticator:
 
 1. Open your Chromium-based browser (Google Chrome, Microsoft Edge, Brave, Opera, Vivaldi).
 2. Navigate to `chrome://extensions` (or `edge://extensions`).
 3. Enable **Developer mode** using the toggle switch in the top-right corner.
-4. Click **Load unpacked** and select the `extension` folder inside this repository (`c:\Users\Admin\Documents\kernyx\extension`).
-5. The **Kernyx Passkey Authenticator** extension is now installed.
+4. Click **Load unpacked** and select the `extension` folder inside this repository (`c:\Users\Admin\Documents\credshell\extension`).
+5. The **CredShell Passkey Authenticator** extension is now installed.
 
 ### How It Works Under the Hood
 - The extension runs a **two-tier architecture**:
   - `page_hook.js` executes in the page's execution context (`world: "MAIN"`) at `document_start`, hooking `navigator.credentials.create` and `navigator.credentials.get`. It reports to the browser that a platform passkey authenticator is available (`PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable = async () => true`).
-  - `background.js` (Manifest V3 Service Worker) communicates directly with the local Kernyx endpoint (`http://127.0.0.1:5209`). Because requests originate from the extension service worker context, they are **completely immune to Mixed-Content blocks, Content-Security-Policy (CSP), and Private Network Access (PNA) restrictions**.
+  - `background.js` (Manifest V3 Service Worker) communicates directly with the local CredShell endpoint (`http://127.0.0.1:5209`). Because requests originate from the extension service worker context, they are **completely immune to Mixed-Content blocks, Content-Security-Policy (CSP), and Private Network Access (PNA) restrictions**.
 
 ---
 
@@ -68,10 +68,10 @@ Example:
 ```powershell
 # Via environment variable:
 $env:CREDSHELL_PASSWORD = "MySecurePassword123!"
-kernyx totp list
+credshell totp list
 
 # Or run interactively (zero-echo masked password entry):
-kernyx totp list
+credshell totp list
 ```
 
 ### Modern Confirmation Architecture (No Terminal Y/N Prompts)
@@ -85,21 +85,21 @@ Interactive terminal `[y/N]` prompts have been eliminated in favor of contextual
 
 ## CLI Usage Reference
 
-All features in Kernyx are driven by clean, scriptable subcommands.
+All features in CredShell are driven by clean, scriptable subcommands.
 
 ```text
 USAGE:
-  kernyx <command> [subcommand] [-v vault_path]
+  credshell <command> [subcommand] [-v vault_path]
 ```
 
 ### Global Flags
 | Flag | Description |
 |---|---|
-| `-v, --vault <path>` | Specify custom vault file path (default: `.kernyx/vault.kdb`) |
+| `-v, --vault <path>` | Specify custom vault file path (default: `.credshell/vault.kdb`) |
 | `-h, --help` | Display help and subcommand reference |
 
 > **Tip:** You can specify `-v <path>` anywhere in the command:  
-> `kernyx totp list -v mydir/vault2.kbd`
+> `credshell totp list -v mydir/vault2.kbd`
 
 ---
 
@@ -108,21 +108,21 @@ USAGE:
 #### Display Vault Status
 Inspect vault version, device identifier, TOTP entries, and passkey counts:
 ```powershell
-kernyx vault status [-v <vault_path>]
+credshell vault status [-v <vault_path>]
 ```
 
 #### Initialize a New Vault
 Create and encrypt a new vault file:
 ```powershell
-kernyx vault create [-v <vault_path>]
+credshell vault create [-v <vault_path>]
 # Example with custom vault path via -v:
-kernyx vault create -v mydir/work.kbd
+credshell vault create -v mydir/work.kbd
 ```
 
 #### Change Master Password
 Re-encrypt the vault with a new master passphrase:
 ```powershell
-kernyx vault change-password [new_password]
+credshell vault change-password [new_password]
 ```
 
 ---
@@ -133,20 +133,20 @@ kernyx vault change-password [new_password]
 Starts the local WebAuthn listener on `127.0.0.1:5209` to service real-time browser and application passkey requests for **both registration and authentication**:
 ```powershell
 # Standard mode (prompts via native GUI modal / browser extension):
-kernyx passkey [-v <vault_path>]
+credshell passkey [-v <vault_path>]
 
 # With auto-approval (for headless automation / CI testing):
-kernyx passkey --auto-approve
+credshell passkey --auto-approve
 
 # Custom port:
-kernyx passkey --port 5209
+credshell passkey --port 5209
 ```
 
 ##### How Registration & Authentication Work:
-- **Auto-Determined Unique ID (`<user>#<party>`)**: Kernyx automatically determines passkey IDs in the standard format `"<username/email>#<party>"` (e.g. `alice#github.com`). No interactive terminal ID entry is needed.
+- **Auto-Determined Unique ID (`<user>#<party>`)**: CredShell automatically determines passkey IDs in the standard format `"<username/email>#<party>"` (e.g. `alice#github.com`). No interactive terminal ID entry is needed.
 - **Domain Matching (`*.example.com`)**: Stored relying parties maintain exact isolation (`example.com` vs `abc.example.com`), but during authentication, all passkeys matching `*.example.com` (exact domain, subdomains, parent domain, sibling subdomains) are presented for user selection.
 - **Collision & Overwrite Handling**:
-  - **Browser Extension & Desktop GUI**: If a registration attempt resolves to an existing ID (e.g. `userxyz#example.com`), Kernyx prompts the user with an overwrite confirmation modal. Choosing Cancel aborts with `NotAllowedError`. Approving overwrites the key directly under the same ID without creating a backup.
+  - **Browser Extension & Desktop GUI**: If a registration attempt resolves to an existing ID (e.g. `userxyz#example.com`), CredShell prompts the user with an overwrite confirmation modal. Choosing Cancel aborts with `NotAllowedError`. Approving overwrites the key directly under the same ID without creating a backup.
   - **Android Credential Manager**: Because the system bottom sheet is managed by Android OS, existing keys with colliding IDs are automatically backed up by renaming the old key to `<id>-bak-<unix_timestamp>` and storing the newly registered key under the original `<id>`.
 - **7-Day Backup Pruning**: While decrypting and reading the vault at startup, any backup passkey older than 7 days (`> 604,800` seconds) is permanently deleted from the vault.
 - **Universal Relying Party Compatibility**: Full W3C WebAuthn Level 3 compliance with RFC 4648 URL-safe Base64 encoding, standard unpadded CBOR `fmt: "none"` attestation (AAGUID `00000000-0000-0000-0000-000000000000`), platform attachment, and internal transport definitions to ensure strict services (Google, WhatsApp, GitHub, Amazon) accept registrations seamlessly without MDS rejection.
@@ -154,11 +154,11 @@ kernyx passkey --port 5209
 #### List Active Passkeys
 View all active registered passkeys in the vault (backup keys are excluded):
 ```powershell
-kernyx passkey list [-v <vault_path>]
+credshell passkey list [-v <vault_path>]
 ```
 *Output:*
 ```text
-Kernyx Vault "vault.kdb" (2 Active Passkeys):
+CredShell Vault "vault.kdb" (2 Active Passkeys):
 
 • ID: alice#github.com            RP: github.com           User: alice            Alg: ES256 (P-256)    Signs: 3
 • ID: bob#abc.example.com         RP: abc.example.com      User: bob              Alg: ES256 (P-256)    Signs: 1
@@ -167,11 +167,11 @@ Kernyx Vault "vault.kdb" (2 Active Passkeys):
 #### List Backup Passkeys (`list-bak`)
 View all backup passkeys created by Android collision replacements:
 ```powershell
-kernyx passkey list-bak [-v <vault_path>]
+credshell passkey list-bak [-v <vault_path>]
 ```
 *Output:*
 ```text
-Kernyx Vault "vault.kdb" (1 Backup Passkeys):
+CredShell Vault "vault.kdb" (1 Backup Passkeys):
 
 • Restore ID: userxyz#example.com-bak        (Stored: userxyz#example.com-bak-1757059200) | Unix Time: 1757059200 | Signs: 2
 ```
@@ -179,22 +179,22 @@ Kernyx Vault "vault.kdb" (1 Backup Passkeys):
 #### Restore Backup Passkey (`restore <id-bak>`)
 Restore a backup key to active status using the `<id>-bak` format (the current active key is moved to backup format `<id>-bak-<unix_timestamp>`):
 ```powershell
-kernyx passkey restore <id-bak> [-v <vault_path>]
+credshell passkey restore <id-bak> [-v <vault_path>]
 
 # Example:
-kernyx passkey restore userxyz#example.com-bak
+credshell passkey restore userxyz#example.com-bak
 ```
 
 #### Delete a Passkey
 Remove a passkey by its unique ID:
 ```powershell
-kernyx passkey delete <id_or_rp> [-v <vault_path>]
+credshell passkey delete <id_or_rp> [-v <vault_path>]
 ```
 
 #### Install Native Messaging Manifest
 Install the native messaging host definition for Chrome/Edge:
 ```powershell
-kernyx passkey install-manifest
+credshell passkey install-manifest
 ```
 
 ---
@@ -205,23 +205,23 @@ kernyx passkey install-manifest
 Store a new TOTP secret in the vault using either an `otpauth://` URI (from QR codes) or raw Base32 secret:
 ```powershell
 # Using an otpauth:// URI:
-kernyx totp add "otpauth://totp/GitHub:alice?secret=JBSWY3DPEHPK3PXP&issuer=GitHub" [-v <vault_path>]
+credshell totp add "otpauth://totp/GitHub:alice?secret=JBSWY3DPEHPK3PXP&issuer=GitHub" [-v <vault_path>]
 
 # Using an otpauth:// URI with a custom ID:
-kernyx totp add github-work "otpauth://totp/GitHub:alice.work@company.com?secret=JBSWY3DPEHPK3PXP&issuer=GitHub"
+credshell totp add github-work "otpauth://totp/GitHub:alice.work@company.com?secret=JBSWY3DPEHPK3PXP&issuer=GitHub"
 
 # Using raw Base32 secret:
-kernyx totp add google-personal JBSWY3DPEHPK3PXP --issuer Google --account alice@gmail.com
+credshell totp add google-personal JBSWY3DPEHPK3PXP --issuer Google --account alice@gmail.com
 ```
-> If no ID is supplied on the command line, Kernyx interactively prompts you to confirm or enter a unique ID (defaulting to the parsed URI label or issuer). Collisions are automatically detected and blocked.
+> If no ID is supplied on the command line, CredShell interactively prompts you to confirm or enter a unique ID (defaulting to the parsed URI label or issuer). Collisions are automatically detected and blocked.
 
 #### Generate TOTP Code by ID
 Generate current 6-digit TOTP code using the credential's unique ID:
 ```powershell
-kernyx totp get <id> [-v <vault_path>]
+credshell totp get <id> [-v <vault_path>]
 
 # Output formatted as JSON:
-kernyx totp get <id> --json [-v <vault_path>]
+credshell totp get <id> --json [-v <vault_path>]
 ```
 *Output:*
 ```text
@@ -236,11 +236,11 @@ Period  : 30s
 #### List Stored TOTP Accounts
 List all entries with their unique IDs:
 ```powershell
-kernyx totp list [-v <vault_path>]
+credshell totp list [-v <vault_path>]
 ```
 *Output:*
 ```text
-Kernyx Vault "vault.kdb" (2 TOTP items):
+CredShell Vault "vault.kdb" (2 TOTP items):
 
 • ID: google-personal      Issuer: Google           Account: alice@gmail.com
 • ID: github-work          Issuer: GitHub           Account: alice.work@company.com
@@ -248,7 +248,7 @@ Kernyx Vault "vault.kdb" (2 TOTP items):
 
 #### Delete a TOTP Account by ID
 ```powershell
-kernyx totp delete <id> [-v <vault_path>]
+credshell totp delete <id> [-v <vault_path>]
 ```
 
 ---
@@ -260,25 +260,25 @@ Synchronize vaults between devices over local networks without exposing secrets 
 #### Start Receiver (Device A)
 Put Device A into receiver mode:
 ```powershell
-kernyx sync rx [--port 7443]
+credshell sync rx [--port 7443]
 ```
 
 #### Transmit Vault (Device B)
 Stream transactional updates from Device B to Device A:
 ```powershell
-kernyx sync tx <device_a_ip[:port]>
+credshell sync tx <device_a_ip[:port]>
 ```
 
 #### Export Encrypted Backup Blob
 Export an encrypted binary backup (`.kxb`) containing vault delta entries:
 ```powershell
-kernyx sync export [backup_path.kxb]
+credshell sync export [backup_path.kxb]
 ```
 
 #### Import Backup Blob
 Transactionally import and merge an encrypted backup blob:
 ```powershell
-kernyx sync import <backup_path.kxb>
+credshell sync import <backup_path.kxb>
 ```
 
 ---
@@ -299,64 +299,64 @@ kernyx sync import <backup_path.kxb>
 
 ## Android & Termux Usage (Native App Passkeys: WhatsApp, Google, etc.)
 
-Kernyx compiles natively and runs directly on Android inside **Termux** (`aarch64-linux-android`).
+CredShell compiles natively and runs directly on Android inside **Termux** (`aarch64-linux-android`).
 
 ### How Android Native App Passkeys Work (vs. Desktop)
 
 - **On Desktop**: Web browsers (Chrome, Edge, Firefox) permit extension hooks into `navigator.credentials`, sending requests directly to `http://127.0.0.1:5209`.
 - **On Android**: Native apps (like **WhatsApp**, Google, Amazon, GitHub app) do **not** run inside a web browser and do not use browser extensions. Instead, Android OS routes all passkey requests through the OS-level **Credential Manager API** (`android.credentials.CredentialManager`).
 - Android OS only dispatches passkey requests to apps registered in the OS manifest as a system `CredentialProviderService` (this is how Proton Pass, Bitwarden, and 1Password work on Android).
-- **Pure Socket Communication (No Termux Dependency)**: The Kernyx companion app is a pure, independent HTTP client that communicates directly with the hosted Kernyx daemon socket (`http://127.0.0.1:5209`, configurable in app settings). It does **not** rely on or inspect Termux.
-- **Native WebAuthn Origin Fidelity**: Native Android apps require the origin to be the SHA-256 fingerprint of their signing certificate (`android:apk-key-hash:<hash>`) along with `androidPackageName`. Kernyx dynamically calculates this from the calling application's signature history so relying parties (like WhatsApp) verify and accept the passkey without rejection.
-- **The Solution**: Kernyx includes an ultra-lightweight Android Credential Provider Bridge APK (`android/`):
-  1. The bridge registers in Android Settings as your phone's system Credential Provider (named **"Kernyx"**).
-  2. When WhatsApp or any app requests a passkey, Android OS passes the WebAuthn request to the Kernyx bridge.
+- **Pure Socket Communication (No Termux Dependency)**: The CredShell companion app is a pure, independent HTTP client that communicates directly with the hosted CredShell daemon socket (`http://127.0.0.1:5209`, configurable in app settings). It does **not** rely on or inspect Termux.
+- **Native WebAuthn Origin Fidelity**: Native Android apps require the origin to be the SHA-256 fingerprint of their signing certificate (`android:apk-key-hash:<hash>`) along with `androidPackageName`. CredShell dynamically calculates this from the calling application's signature history so relying parties (like WhatsApp) verify and accept the passkey without rejection.
+- **The Solution**: CredShell includes an ultra-lightweight Android Credential Provider Bridge APK (`android/`):
+  1. The bridge registers in Android Settings as your phone's system Credential Provider (named **"CredShell"**).
+  2. When WhatsApp or any app requests a passkey, Android OS passes the WebAuthn request to the CredShell bridge.
   3. The bridge forwards the request with full origin and package metadata to the hosted socket (`http://127.0.0.1:5209`).
-  4. Your local Rust **Kernyx** handles the vault, cryptographic signatures, and auto-approval/terminal interaction in pure Rust, then returns the signed assertion to WhatsApp.
+  4. Your local Rust **CredShell** handles the vault, cryptographic signatures, and auto-approval/terminal interaction in pure Rust, then returns the signed assertion to WhatsApp.
   5. **Completely Local & Private**: Everything runs locally on your device without third-party cloud intermediaries.
 
 ---
 
 ### Step-by-Step Android Setup
 
-#### Step 1: Install & Build Kernyx
-Run the Kernyx daemon on your device (e.g. inside Termux, Linux chroot, or any terminal environment):
+#### Step 1: Install & Build CredShell
+Run the CredShell daemon on your device (e.g. inside Termux, Linux chroot, or any terminal environment):
 ```bash
 # 1. Install Rust and Git
 pkg update
 pkg install rust git
 
-# 2. Clone and build Kernyx
-git clone <repo-url> ~/kernyx
-cd ~/kernyx
+# 2. Clone and build CredShell
+git clone <repo-url> ~/credshell
+cd ~/credshell
 cargo build --release
 
 # 3. Verify native build
-./target/release/kernyx --help
+./target/release/credshell --help
 ```
 
-#### Step 2: Install the Kernyx Android Credential Provider Bridge
+#### Step 2: Install the CredShell Android Credential Provider Bridge
 The lightweight open-source bridge APK is located in `android/`:
 - **Pre-built APK**: Install `android/app/build/outputs/apk/debug/app-debug.apk`:
   ```bash
   adb install -r android/app/build/outputs/apk/debug/app-debug.apk
   ```
-- **Configure Socket**: Open the **Kernyx** app on your phone to configure or test the hosted socket endpoint (default: `http://127.0.0.1:5209`).
+- **Configure Socket**: Open the **CredShell** app on your phone to configure or test the hosted socket endpoint (default: `http://127.0.0.1:5209`).
 
-#### Step 3: Enable Kernyx in Android Settings
+#### Step 3: Enable CredShell in Android Settings
 1. On your phone, open **Settings** → **Passwords, passkeys & accounts** (or search **"Credential Manager"** / **"Autofill service"**).
-2. Under **Preferred service** (or **Additional providers**), tap **Kernyx**.
-3. Tap **OK** to confirm Kernyx as your system credential provider.
+2. Under **Preferred service** (or **Additional providers**), tap **CredShell**.
+3. Tap **OK** to confirm CredShell as your system credential provider.
 
 #### Step 4: Start Daemon & Authenticate in WhatsApp
 1. In your terminal, start the passkey listener:
    ```bash
-   cd ~/kernyx
-   ./target/release/kernyx passkey
+   cd ~/credshell
+   ./target/release/credshell passkey
    ```
 2. Open **WhatsApp** → **Settings** → **Account** → **Passkeys** → **Create a passkey**.
-3. Android OS displays the Kernyx passkey prompt.
-4. Kernyx creates the NIST P-256 passkey, saves it to your encrypted vault, and returns the attestation.
+3. Android OS displays the CredShell passkey prompt.
+4. CredShell creates the NIST P-256 passkey, saves it to your encrypted vault, and returns the attestation.
 5. WhatsApp confirms: **"Passkey created successfully!"**
 
 ---
@@ -366,8 +366,4 @@ The lightweight open-source bridge APK is located in `android/`:
 1. **Zero Memory Leaks**: Sensitive cryptographic buffers and passphrases are zeroized after execution using volatile memory writes and compiler fences.
 2. **Zero Third-Party Telemetry / Network Calls**: The binary does not make outbound network requests. Passkey listening binds strictly to loopback (`127.0.0.1`).
 3. **No Attack Surface from Daemons**: No background daemon is installed. The software runs only when invoked.
-4. **Zero-Crate Supply Chain Security**: With zero dependencies in `Cargo.toml`, Kernyx is completely immune to third-party crate vulnerabilities, typosquatting attacks, and malicious dependency updates.
-
----
-
-**Disclaimer**: Despite the security guarantees provided by this project, it is essential to remember that no software is completely immune to security vulnerabilities. Users are advised to exercise caution and implement appropriate security measures when using this tool. Also the current codebase may have bugs and unintentional vulnerabilities, not production-ready. Use at your own risk. You are welcome to break it, find vulnerabilities, submit pull requests, and help improve the project.
+4. **Zero-Crate Supply Chain Security**: With zero dependencies in `Cargo.toml`, CredShell is completely immune to third-party crate vulnerabilities, typosquatting attacks, and malicious dependency updates.
