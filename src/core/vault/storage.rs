@@ -16,7 +16,7 @@ pub const MIN_ITERATIONS: u32 = 10_000;
 pub const MAX_ITERATIONS: u32 = 5_000_000;
 
 pub fn default_vault_path() -> PathBuf {
-    let local_dir = Path::new(".kernyx");
+    let local_dir = Path::new(".credshell");
     if !local_dir.exists() {
         let _ = fs::create_dir_all(local_dir);
     }
@@ -149,7 +149,7 @@ pub fn load_vault(path: &Path, passphrase: &str) -> Result<Vault, String> {
     if expired_count > 0 {
         let snapshot_path = path.with_extension("kdb.pruned_bak");
         let _ = save_vault_atomic(&snapshot_path, &vault, passphrase);
-        eprintln!("[Kernyx Audit] Pruning {} expired backup passkey(s) (>7 days old). Safety snapshot archived at {:?}", expired_count, snapshot_path);
+        eprintln!("[CredShell Audit] Pruning {} expired backup passkey(s) (>7 days old). Safety snapshot archived at {:?}", expired_count, snapshot_path);
         if vault.prune_expired_backups(SEVEN_DAYS_SECS) {
             let _ = save_vault_atomic(path, &vault, passphrase);
         }

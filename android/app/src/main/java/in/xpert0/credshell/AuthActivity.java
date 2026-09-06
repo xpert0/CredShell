@@ -1,4 +1,4 @@
-package org.kernyx.provider;
+package in.xpert0.credshell;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,12 +22,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AuthActivity extends Activity {
-    private static final String TAG = "KernyxProvider";
+    private static final String TAG = "CredShellProvider";
 
-    public static final String EXTRA_TYPE = "kernyx_type";
-    public static final String EXTRA_REQUEST_JSON = "kernyx_request_json";
-    public static final String EXTRA_ORIGIN = "kernyx_origin";
-    public static final String EXTRA_PACKAGE_NAME = "kernyx_package_name";
+    public static final String EXTRA_TYPE = "credshell_type";
+    public static final String EXTRA_REQUEST_JSON = "credshell_request_json";
+    public static final String EXTRA_ORIGIN = "credshell_origin";
+    public static final String EXTRA_PACKAGE_NAME = "credshell_package_name";
     public static final String TYPE_CREATE = "create";
     public static final String TYPE_GET = "get";
 
@@ -63,14 +63,14 @@ public class AuthActivity extends Activity {
         final String finalOrigin = origin;
         final String finalPackageName = packageName;
 
-        Toast.makeText(this, "Kernyx: Authenticating with passkey server...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "CredShell: Authenticating with passkey server...", Toast.LENGTH_SHORT).show();
 
         executor.execute(() -> {
             try {
                 if (TYPE_CREATE.equals(finalType)) {
-                    Log.i(TAG, "Sending create request to Kernyx socket...");
-                    String responseJson = KernyxClient.createPasskey(this, finalRequestJson, finalOrigin, finalPackageName);
-                    Log.i(TAG, "Kernyx create succeeded, response: " + responseJson);
+                    Log.i(TAG, "Sending create request to CredShell socket...");
+                    String responseJson = CredShellClient.createPasskey(this, finalRequestJson, finalOrigin, finalPackageName);
+                    Log.i(TAG, "CredShell create succeeded, response: " + responseJson);
 
                     mainHandler.post(() -> {
                         Intent resultIntent = new Intent();
@@ -89,9 +89,9 @@ public class AuthActivity extends Activity {
                         finish();
                     });
                 } else {
-                    Log.i(TAG, "Sending get/assertion request to Kernyx socket...");
-                    String responseJson = KernyxClient.getPasskey(this, finalRequestJson, finalOrigin, finalPackageName);
-                    Log.i(TAG, "Kernyx get succeeded, response: " + responseJson);
+                    Log.i(TAG, "Sending get/assertion request to CredShell socket...");
+                    String responseJson = CredShellClient.getPasskey(this, finalRequestJson, finalOrigin, finalPackageName);
+                    Log.i(TAG, "CredShell get succeeded, response: " + responseJson);
 
                     mainHandler.post(() -> {
                         Intent resultIntent = new Intent();
@@ -121,7 +121,7 @@ public class AuthActivity extends Activity {
                 mainHandler.post(() -> {
                     Toast.makeText(
                             AuthActivity.this,
-                            "Kernyx: " + errorMsg + "\nCheck socket at " + KernyxClient.getBaseUrl(AuthActivity.this),
+                            "CredShell: " + errorMsg + "\nCheck socket at " + CredShellClient.getBaseUrl(AuthActivity.this),
                             Toast.LENGTH_LONG
                     ).show();
                     setResult(Activity.RESULT_CANCELED);
@@ -227,7 +227,7 @@ public class AuthActivity extends Activity {
         try {
             ProviderCreateCredentialRequest providerCreate = PendingIntentHandler.retrieveProviderCreateCredentialRequest(intent);
             if (providerCreate != null && providerCreate.getCallingAppInfo() != null) {
-                String origin = KernyxCredentialProviderService.getAppOrigin(providerCreate.getCallingAppInfo(), getPackageManager());
+                String origin = CredShellCredentialProviderService.getAppOrigin(providerCreate.getCallingAppInfo(), getPackageManager());
                 if (origin != null && !origin.trim().isEmpty()) return origin;
             }
         } catch (Throwable ignored) {}
@@ -235,7 +235,7 @@ public class AuthActivity extends Activity {
         try {
             ProviderGetCredentialRequest providerGet = PendingIntentHandler.retrieveProviderGetCredentialRequest(intent);
             if (providerGet != null && providerGet.getCallingAppInfo() != null) {
-                String origin = KernyxCredentialProviderService.getAppOrigin(providerGet.getCallingAppInfo(), getPackageManager());
+                String origin = CredShellCredentialProviderService.getAppOrigin(providerGet.getCallingAppInfo(), getPackageManager());
                 if (origin != null && !origin.trim().isEmpty()) return origin;
             }
         } catch (Throwable ignored) {}

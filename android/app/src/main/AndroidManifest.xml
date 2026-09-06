@@ -23,7 +23,7 @@
         android:networkSecurityConfig="@xml/network_security_config">
 
         <service
-            android:name=".KernyxCredentialProviderService"
+            android:name=".CredShellCredentialProviderService"
             android:exported="true"
             android:permission="android.permission.BIND_CREDENTIAL_PROVIDER_SERVICE">
             <intent-filter>

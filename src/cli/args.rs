@@ -67,7 +67,7 @@ pub fn parse_cli(args: &[String]) -> Result<CliConfig, String> {
     while i < args.len() {
         let arg = &args[i];
         if arg == "-p" || arg == "--password" || arg.starts_with("-p=") || arg.starts_with("--password=") {
-            return Err("The '-p' / '--password' flag has been removed. Please supply your master password via the KERNYX_PASSWORD or KERNYX_PASSPHRASE environment variable, or enter it interactively.".to_string());
+            return Err("The '-p' / '--password' flag has been removed. Please supply your master password via the CREDSHELL_PASSWORD or CREDSHELL_PASSPHRASE environment variable, or enter it interactively.".to_string());
         } else if arg == "-v" || arg == "--vault" {
             if i + 1 < args.len() {
                 explicit_vault_path = Some(PathBuf::from(&args[i + 1]));
@@ -108,13 +108,13 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
             let path = if args.len() > 1 {
                 args[1].clone()
             } else {
-                "kernyx_backup.kxb".to_string()
+                "credshell_backup.kxb".to_string()
             };
             Ok(Command::Export { output_path: path })
         }
         "import" => {
             if args.len() < 2 {
-                return Err("Usage: kernyx [vault] import <file>".to_string());
+                return Err("Usage: credshell [vault] import <file>".to_string());
             }
             Ok(Command::Import { input_path: args[1].clone() })
         }
@@ -134,7 +134,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
             match args[1].as_str() {
                 "get" => {
                     if args.len() < 3 {
-                        return Err("Usage: kernyx totp get <id> [--json] [-v vault]".to_string());
+                        return Err("Usage: credshell totp get <id> [--json] [-v vault]".to_string());
                     }
                     let name = args[2].clone();
                     let json = args.iter().any(|a| a == "--json");
@@ -142,7 +142,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                 }
                 "add" => {
                     if args.len() < 3 {
-                        return Err("Usage: kernyx totp add [id] <secret_or_otpauth_uri> [--issuer <iss>] [--account <acc>] [--algo <algo>] [-v vault]".to_string());
+                        return Err("Usage: credshell totp add [id] <secret_or_otpauth_uri> [--issuer <iss>] [--account <acc>] [--algo <algo>] [-v vault]".to_string());
                     }
                     let mut pos = Vec::new();
                     let mut issuer = None;
@@ -173,7 +173,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                     }
 
                     if pos.is_empty() {
-                        return Err("Usage: kernyx totp add [id] <secret_or_otpauth_uri> [options]".to_string());
+                        return Err("Usage: credshell totp add [id] <secret_or_otpauth_uri> [options]".to_string());
                     }
 
                     let (id, secret_or_uri) = if pos.len() == 1 {
@@ -196,7 +196,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                 }
                 "delete" | "rm" => {
                     if args.len() < 3 {
-                        return Err("Usage: kernyx totp delete <id> [-v vault]".to_string());
+                        return Err("Usage: credshell totp delete <id> [-v vault]".to_string());
                     }
                     Ok(Command::TotpDelete { name: args[2].clone() })
                 }
@@ -249,7 +249,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                 }),
                 "restore" => {
                     if pos_args.is_empty() {
-                        return Err("Usage: kernyx passkey restore <id-bak> [-v vault]".to_string());
+                        return Err("Usage: credshell passkey restore <id-bak> [-v vault]".to_string());
                     }
                     Ok(Command::Passkey {
                         subaction: Some(PasskeyAction::Restore {
@@ -262,7 +262,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                 }),
                 "delete" | "rm" => {
                     if pos_args.is_empty() {
-                        return Err("Usage: kernyx passkey delete <id_or_rp> [-v vault]".to_string());
+                        return Err("Usage: credshell passkey delete <id_or_rp> [-v vault]".to_string());
                     }
                     Ok(Command::Passkey {
                         subaction: Some(PasskeyAction::Delete {
@@ -277,7 +277,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
         }
         "sync" => {
             if args.len() < 2 {
-                return Err("Usage: kernyx [vault] sync [rx|tx|export|import]".to_string());
+                return Err("Usage: credshell [vault] sync [rx|tx|export|import]".to_string());
             }
             match args[1].as_str() {
                 "rx" => {
@@ -297,7 +297,7 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                 }
                 "tx" => {
                     if args.len() < 3 {
-                        return Err("Usage: kernyx [vault] sync tx <target_ip_or_host[:port]>".to_string());
+                        return Err("Usage: credshell [vault] sync tx <target_ip_or_host[:port]>".to_string());
                     }
                     let mut target = args[2].clone();
                     if !target.contains(':') || (target.starts_with('[') && !target.contains("]:")) {
@@ -309,13 +309,13 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                     let path = if args.len() > 2 {
                         args[2].clone()
                     } else {
-                        "kernyx_backup.kxb".to_string()
+                        "credshell_backup.kxb".to_string()
                     };
                     Ok(Command::Export { output_path: path })
                 }
                 "import" => {
                     if args.len() < 3 {
-                        return Err("Usage: kernyx [vault] sync import <file>".to_string());
+                        return Err("Usage: credshell [vault] sync import <file>".to_string());
                     }
                     Ok(Command::Import { input_path: args[2].clone() })
                 }
@@ -340,6 +340,6 @@ fn parse_command(args: &[String]) -> Result<Command, String> {
                 _ => Err(format!("Unknown vault command: '{}'. Options: status, create, change-password", args[1])),
             }
         }
-        unknown => Err(format!("Unknown command: '{}'. Run 'kernyx --help' for usage.", unknown)),
+        unknown => Err(format!("Unknown command: '{}'. Run 'credshell --help' for usage.", unknown)),
     }
 }

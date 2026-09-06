@@ -1,4 +1,4 @@
-package org.kernyx.provider;
+package in.xpert0.credshell;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -38,8 +38,8 @@ import androidx.credentials.provider.PublicKeyCredentialEntry;
 import java.security.MessageDigest;
 
 @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-public class KernyxCredentialProviderService extends CredentialProviderService {
-    private static final String TAG = "KernyxProvider";
+public class CredShellCredentialProviderService extends CredentialProviderService {
+    private static final String TAG = "CredShellProvider";
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
@@ -71,7 +71,7 @@ public class KernyxCredentialProviderService extends CredentialProviderService {
 
             final String appLabel = (packageName != null) ? packageName : "app";
             mainHandler.post(() -> {
-                Toast.makeText(getApplicationContext(), "Kernyx: Passkey request from " + appLabel, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "CredShell: Passkey request from " + appLabel, Toast.LENGTH_SHORT).show();
             });
 
             Intent intent = new Intent(this, AuthActivity.class);
@@ -107,7 +107,7 @@ public class KernyxCredentialProviderService extends CredentialProviderService {
                     userLabel,
                     pendingIntent
             )
-            .setDescription("Save passkey in Kernyx")
+            .setDescription("Save passkey in CredShell")
             .build();
 
             BeginCreateCredentialResponse response = new BeginCreateCredentialResponse.Builder()
@@ -142,7 +142,7 @@ public class KernyxCredentialProviderService extends CredentialProviderService {
 
             final String appLabel = (packageName != null) ? packageName : "app";
             mainHandler.post(() -> {
-                Toast.makeText(getApplicationContext(), "Kernyx: Sign-in request for " + appLabel, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "CredShell: Sign-in request for " + appLabel, Toast.LENGTH_SHORT).show();
             });
 
             for (BeginGetCredentialOption option : request.getBeginGetCredentialOptions()) {
@@ -169,7 +169,7 @@ public class KernyxCredentialProviderService extends CredentialProviderService {
 
                     PublicKeyCredentialEntry credEntry = new PublicKeyCredentialEntry.Builder(
                             this,
-                            "Kernyx Passkey",
+                            "CredShell Passkey",
                             pendingIntent,
                             pkOption
                     )

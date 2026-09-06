@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Kernyx",
+  "name": "CredShell",
   "version": "1.2.0",
-  "description": "Native WebAuthn & Passkey authenticator for Kernyx zero-daemon vault.",
+  "description": "Native WebAuthn & Passkey authenticator for CredShell zero-daemon vault.",
   "permissions": ["activeTab"],
   "host_permissions": [
     "http://127.0.0.1:5209/*"
@@ -27,6 +27,6 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Kernyx"
+    "default_title": "CredShell"
   }
 }

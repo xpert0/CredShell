@@ -1,4 +1,4 @@
-const KERNYX_BASE = 'http://127.0.0.1:5209';
+const CREDSHELL_BASE = 'http://127.0.0.1:5209';
 
 function getSenderDomain(sender) {
   const rawUrl = (sender.tab && sender.tab.url) || sender.url;
@@ -53,7 +53,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'check_status') {
-    fetch(`${KERNYX_BASE}/status`)
+    fetch(`${CREDSHELL_BASE}/status`)
       .then(r => r.json())
       .then(data => sendResponse({ success: true, data }))
       .catch(err => sendResponse({ success: false, error: err.message }));
@@ -73,12 +73,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   const commonHeaders = {
     'Content-Type': 'application/json',
-    'X-Kernyx-Tab-Origin': tabDomain || '',
-    'X-Kernyx-Confirmed': (request.user_confirmed === true) ? 'true' : 'false'
+    'X-CredShell-Tab-Origin': tabDomain || '',
+    'X-CredShell-Confirmed': (request.user_confirmed === true) ? 'true' : 'false'
   };
 
   if (request.action === 'webauthn_create') {
-    fetch(`${KERNYX_BASE}/webauthn/create`, {
+    fetch(`${CREDSHELL_BASE}/webauthn/create`, {
       method: 'POST',
       headers: commonHeaders,
       body: JSON.stringify(request.payload)
@@ -96,7 +96,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'webauthn_query') {
-    fetch(`${KERNYX_BASE}/webauthn/query`, {
+    fetch(`${CREDSHELL_BASE}/webauthn/query`, {
       method: 'POST',
       headers: commonHeaders,
       body: JSON.stringify(request.payload)
@@ -114,7 +114,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'webauthn_get') {
-    fetch(`${KERNYX_BASE}/webauthn/get`, {
+    fetch(`${CREDSHELL_BASE}/webauthn/get`, {
       method: 'POST',
       headers: commonHeaders,
       body: JSON.stringify(request.payload)

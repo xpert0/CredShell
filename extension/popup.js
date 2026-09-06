@@ -13,7 +13,7 @@ async function checkStatus() {
     }
   } catch (e) {
     badge.className = 'status-badge offline';
-    text.textContent = 'Kernyx listener stopped';
+    text.textContent = 'CredShell listener stopped';
   }
 }
 

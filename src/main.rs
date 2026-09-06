@@ -1,5 +1,5 @@
-use kernyx::cli::args::{parse_cli, Command};
-use kernyx::cli::commands::{
+use credshell::cli::args::{parse_cli, Command};
+use credshell::cli::commands::{
     get_or_unlock_vault, handle_export, handle_import, handle_passkey, handle_sync_rx,
     handle_sync_tx, handle_totp_add, handle_totp_delete, handle_totp_get, handle_totp_list,
     handle_vault_change_password, handle_vault_status,
@@ -8,9 +8,9 @@ use std::env;
 use std::process;
 
 fn print_help() {
-    println!("\x1b[1;36mKernyx\x1b[0m — Zero-Crate, Zero-Daemon Local Vault Authenticator (TOTP + WebAuthn Passkeys)\n");
+    println!("\x1b[1;36mCredShell\x1b[0m — Zero-Crate, Zero-Daemon Local Vault Authenticator (TOTP + WebAuthn Passkeys)\n");
     println!("\x1b[1mUSAGE:\x1b[0m");
-    println!("  kernyx <command> [subcommand] [-v vault_path]\n");
+    println!("  credshell <command> [subcommand] [-v vault_path]\n");
 
     println!("\x1b[1mCOMMANDS:\x1b[0m");
     println!("  \x1b[33mtotp\x1b[0m");
@@ -40,16 +40,16 @@ fn print_help() {
     println!("    change-password [new_pass]              Re-encrypt vault with a new master passphrase\n");
 
     println!("\x1b[1mFLAGS:\x1b[0m");
-    println!("  -v, --vault <file_path>                   Specify vault file path (default: .kernyx/vault.kdb)");
+    println!("  -v, --vault <file_path>                   Specify vault file path (default: .credshell/vault.kdb)");
     println!("  -h, --help                                Print this help message\n");
 
     println!("\x1b[1mEXAMPLES:\x1b[0m");
-    println!("  kernyx passkey");
-    println!("  kernyx totp add \"otpauth://totp/GitHub:alice?secret=JBSWY3DPEHPK3PXP\"");
-    println!("  kernyx totp add github-work JBSWY3DPEHPK3PXP --issuer GitHub");
-    println!("  kernyx totp get github-work");
-    println!("  kernyx totp list -v mydir/vault2.kbd");
-    println!("  kernyx vault status -v mydir/vault2.kbd\n");
+    println!("  credshell passkey");
+    println!("  credshell totp add \"otpauth://totp/GitHub:alice?secret=JBSWY3DPEHPK3PXP\"");
+    println!("  credshell totp add github-work JBSWY3DPEHPK3PXP --issuer GitHub");
+    println!("  credshell totp get github-work");
+    println!("  credshell totp list -v mydir/vault2.kbd");
+    println!("  credshell vault status -v mydir/vault2.kbd\n");
 }
 
 fn main() {
@@ -86,7 +86,7 @@ fn main() {
             handle_vault_change_password(vault_path, new_password)
         }
         Command::Init => {
-            println!("Initializing Kernyx vault at {:?}...", vault_path);
+            println!("Initializing CredShell vault at {:?}...", vault_path);
             match get_or_unlock_vault(vault_path, None) {
                 Ok(_) => {
                     println!("✓ Vault is ready at {:?}", vault_path);

@@ -375,7 +375,7 @@ pub fn vault_from_json(s: &str) -> Result<Vault, String> {
     let root = JsonParser::parse(s)?;
 
     let version = root.get("version").and_then(|v| v.as_u32()).unwrap_or(1);
-    let device_name = root.get("device_name").and_then(|v| v.as_str()).unwrap_or("kernyx-node").to_string();
+    let device_name = root.get("device_name").and_then(|v| v.as_str()).unwrap_or("credshell-node").to_string();
 
     let device_seed_hex = root.get("device_seed").and_then(|v| v.as_str()).unwrap_or("");
     let device_seed_vec = hex_decode(device_seed_hex).unwrap_or_else(|_| vec![0u8; 32]);

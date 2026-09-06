@@ -20,7 +20,7 @@ pub fn get_or_unlock_vault(
             return Err("Supplied password cannot be empty".to_string());
         }
         p.to_string()
-    } else if let Ok(pass) = env::var("KERNYX_PASSWORD").or_else(|_| env::var("KERNYX_PASSPHRASE")) {
+    } else if let Ok(pass) = env::var("CREDSHELL_PASSWORD").or_else(|_| env::var("CREDSHELL_PASSPHRASE")) {
         if !pass.trim().is_empty() {
             eprintln!("\x1b[33m[Warning]\x1b[0m Master password supplied via environment variable. Ensure this variable is not exposed in shared shell environments.");
             pass.trim().to_string()
@@ -166,9 +166,9 @@ pub fn handle_totp_list(
         return Ok(());
     }
 
-    println!("Kernyx Vault {:?} ({} TOTP items):\n", vault_path, vault.totp_entries.len());
+    println!("CredShell Vault {:?} ({} TOTP items):\n", vault_path, vault.totp_entries.len());
     if vault.totp_entries.is_empty() {
-        println!("  (No TOTP entries found. Use 'kernyx totp add' to create one.)");
+        println!("  (No TOTP entries found. Use 'credshell totp add' to create one.)");
         return Ok(());
     }
 
@@ -222,7 +222,7 @@ pub fn handle_passkey(
                 .iter()
                 .filter(|p| !Vault::is_bak_passkey(&p.id))
                 .collect();
-            println!("Kernyx Vault {:?} ({} Active Passkeys):\n", vault_path, active_keys.len());
+            println!("CredShell Vault {:?} ({} Active Passkeys):\n", vault_path, active_keys.len());
             if active_keys.is_empty() {
                 println!("  (No active passkeys stored in vault)");
                 return Ok(());
@@ -238,7 +238,7 @@ pub fn handle_passkey(
                 .iter()
                 .filter(|p| Vault::is_bak_passkey(&p.id))
                 .collect();
-            println!("Kernyx Vault {:?} ({} Backup Passkeys):\n", vault_path, bak_keys.len());
+            println!("CredShell Vault {:?} ({} Backup Passkeys):\n", vault_path, bak_keys.len());
             if bak_keys.is_empty() {
                 println!("  (No backup passkeys found in vault)");
                 return Ok(());
@@ -278,7 +278,7 @@ pub fn handle_vault_status(
 ) -> Result<(), String> {
     let (vault, _) = get_or_unlock_vault(vault_path, None)?;
     println!("╭──────────────────────────────────────────────╮");
-    println!("│             KERNYX VAULT STATUS              │");
+    println!("│             CREDSHELL VAULT STATUS              │");
     println!("├──────────────────────────────────────────────┤");
     println!("│ Path:            {:<28}│", vault_path.to_string_lossy());
     println!("│ Version:         {:<28}│", vault.version);
@@ -311,23 +311,23 @@ pub fn handle_vault_change_password(
 fn install_browser_native_manifest() -> Result<(), String> {
     let exe_path = env::current_exe().map_err(|e| e.to_string())?;
     let manifest_dir = env::var("LOCALAPPDATA")
-        .map(|p| std::path::PathBuf::from(p).join("Kernyx"))
-        .unwrap_or_else(|_| std::path::PathBuf::from(".kernyx"));
+        .map(|p| std::path::PathBuf::from(p).join("CredShell"))
+        .unwrap_or_else(|_| std::path::PathBuf::from(".credshell"));
 
     std::fs::create_dir_all(&manifest_dir).map_err(|e| e.to_string())?;
-    let manifest_path = manifest_dir.join("com.kernyx.passkey.json");
+    let manifest_path = manifest_dir.join("com.credshell.passkey.json");
 
     let exe_str = exe_path.to_string_lossy().replace('\\', "\\\\");
     let manifest_content = format!(
-        "{{\n  \"name\": \"com.kernyx.passkey\",\n  \"description\": \"Kernyx Native Passkey Authenticator\",\n  \"path\": \"{}\",\n  \"type\": \"stdio\",\n  \"allowed_origins\": [\"chrome-extension://*/\"]\n}}\n",
+        "{{\n  \"name\": \"com.credshell.passkey\",\n  \"description\": \"CredShell Native Passkey Authenticator\",\n  \"path\": \"{}\",\n  \"type\": \"stdio\",\n  \"allowed_origins\": [\"chrome-extension://*/\"]\n}}\n",
         exe_str
     );
 
     std::fs::write(&manifest_path, manifest_content).map_err(|e| e.to_string())?;
     println!("✓ Native messaging manifest written to {:?}", manifest_path);
     println!("✓ Registry registration commands for Chrome and Edge:");
-    println!("  reg add \"HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.kernyx.passkey\" /ve /t REG_SZ /d \"{}\" /f", manifest_path.to_string_lossy());
-    println!("  reg add \"HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\com.kernyx.passkey\" /ve /t REG_SZ /d \"{}\" /f", manifest_path.to_string_lossy());
+    println!("  reg add \"HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.credshell.passkey\" /ve /t REG_SZ /d \"{}\" /f", manifest_path.to_string_lossy());
+    println!("  reg add \"HKCU\\Software\\Microsoft\\Edge\\NativeMessagingHosts\\com.credshell.passkey\" /ve /t REG_SZ /d \"{}\" /f", manifest_path.to_string_lossy());
     Ok(())
 }
 

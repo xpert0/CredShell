@@ -39,7 +39,7 @@ pub fn get_default_device_name() -> String {
             return name.trim().to_lowercase();
         }
     }
-    format!("kernyx-{}", current_platform_name().to_lowercase())
+    format!("credshell-{}", current_platform_name().to_lowercase())
 }
 
 #[cfg(windows)]
@@ -180,7 +180,7 @@ pub fn native_gui_confirm(title: &str, message: &str) -> bool {
     }
 
     use std::io::{self, Write};
-    eprint!("\x1b[1;33m[Kernyx Confirmation]\x1b[0m {}: {} (y/N): ", title, message);
+    eprint!("\x1b[1;33m[CredShell Confirmation]\x1b[0m {}: {} (y/N): ", title, message);
     let _ = io::stderr().flush();
     let mut input = String::new();
     if io::stdin().read_line(&mut input).is_ok() {

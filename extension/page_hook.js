@@ -1,6 +1,6 @@
 (function() {
-  if (window.__kernyx_hook_installed) return;
-  window.__kernyx_hook_installed = true;
+  if (window.__credshell_hook_installed) return;
+  window.__credshell_hook_installed = true;
 
   if (typeof window.PublicKeyCredential !== 'undefined') {
     PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable = async function() {
@@ -45,25 +45,25 @@
     return bytes.buffer;
   }
 
-  function sendToKernyx(action, payload) {
+  function sendToCredShell(action, payload) {
     return new Promise((resolve, reject) => {
-      const id = 'kernyx_' + Math.random().toString(36).substring(2, 12);
+      const id = 'credshell_' + Math.random().toString(36).substring(2, 12);
 
       const handler = (event) => {
-        if (event.source !== window || !event.data || event.data.target !== 'kernyx-page-hook' || event.data.id !== id) {
+        if (event.source !== window || !event.data || event.data.target !== 'credshell-page-hook' || event.data.id !== id) {
           return;
         }
         window.removeEventListener('message', handler);
         if (event.data.success) {
           resolve(event.data.data);
         } else {
-          reject(new Error(event.data.error || 'Operation failed in Kernyx'));
+          reject(new Error(event.data.error || 'Operation failed in CredShell'));
         }
       };
 
       window.addEventListener('message', handler);
       window.postMessage({
-        target: 'kernyx-content-bridge',
+        target: 'credshell-content-bridge',
         id,
         action,
         payload
@@ -71,7 +71,7 @@
 
       setTimeout(() => {
         window.removeEventListener('message', handler);
-        reject(new Error('Kernyx passkey operation timed out'));
+        reject(new Error('CredShell passkey operation timed out'));
       }, 60000);
     });
   }
@@ -110,7 +110,7 @@
     inFlightOp = true;
 
     try {
-      const data = await sendToKernyx('webauthn_create', {
+      const data = await sendToCredShell('webauthn_create', {
         rp_id: rpId,
         rp_name: rpName,
         user_name: userName,
@@ -177,7 +177,7 @@
     inFlightOp = true;
 
     try {
-      const data = await sendToKernyx('webauthn_get', {
+      const data = await sendToCredShell('webauthn_get', {
         rp_id: rpId,
         challenge: challengeB64,
         allow_credentials: allowCreds,
@@ -216,5 +216,5 @@
     }
   };
 
-  console.log('✓ [Kernyx] Passkey Authenticator active on ' + window.location.hostname);
+  console.log('✓ [CredShell] Passkey Authenticator active on ' + window.location.hostname);
 })();

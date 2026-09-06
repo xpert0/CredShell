@@ -49,7 +49,7 @@ pub fn print_passkey_reg_box(rp_id: &str, account: &str) {
     println!("│ \x1b[1;32m{:<36}\x1b[0m │", account);
     println!("│                                      │");
     println!("│ New credential will be stored in     │");
-    println!("│ the Kernyx vault.                    │");
+    println!("│ the CredShell vault.                 │");
     println!("│                                      │");
     println!("│ Create passkey? [y/N]                │");
     println!("╰──────────────────────────────────────╯");
@@ -57,7 +57,7 @@ pub fn print_passkey_reg_box(rp_id: &str, account: &str) {
 
 pub fn print_passkey_active_banner() {
     println!("╭──────────────────────────────────────╮");
-    println!("│              \x1b[1mKERNYX\x1b[0m                  │");
+    println!("│              \x1b[1mCREDSHELL\x1b[0m               │");
     println!("│                                      │");
     println!("│ \x1b[1;32mPasskey authenticator active\x1b[0m         │");
     println!("│                                      │");

@@ -14,7 +14,7 @@ use std::path::Path;
 
 pub const DEFAULT_PASSKEY_PORT: u16 = 5209;
 
-pub const EMBEDDED_BRIDGE_JS: &str = include_str!("../../../gui/kernyx-bridge.js");
+pub const EMBEDDED_BRIDGE_JS: &str = include_str!("../../../gui/credshell-bridge.js");
 
 
 fn is_allowed_origin(origin: &str) -> bool {
@@ -62,7 +62,7 @@ impl PasskeyListener {
             .map_err(|e| format!("Failed to bind passkey listener on 127.0.0.1:{}: {}", self.port, e))?;
 
         println!("\x1b[1;36m╭──────────────────────────────────────╮\x1b[0m");
-        println!("\x1b[1;36m│              \x1b[1mKERNYX\x1b[0m                  \x1b[1;36m│\x1b[0m");
+        println!("\x1b[1;36m│              \x1b[1mCREDSHELL\x1b[0m               \x1b[1;36m│\x1b[0m");
         println!("\x1b[1;36m│                                      │\x1b[0m");
         println!("\x1b[1;36m│ \x1b[32m●\x1b[0m \x1b[1mPasskey authenticator active\x1b[0m       \x1b[1;36m│\x1b[0m");
         println!("\x1b[1;36m│                                      │\x1b[0m");
@@ -143,9 +143,9 @@ impl PasskeyListener {
                 content_length = val.trim().parse::<usize>().unwrap_or(0);
             } else if let Some(val) = lower.strip_prefix("origin:") {
                 request_origin = Some(val.trim().to_string());
-            } else if let Some(val) = lower.strip_prefix("x-kernyx-tab-origin:") {
+            } else if let Some(val) = lower.strip_prefix("x-credshell-tab-origin:") {
                 tab_origin = Some(val.trim().to_string());
-            } else if let Some(val) = lower.strip_prefix("x-kernyx-confirmed:") {
+            } else if let Some(val) = lower.strip_prefix("x-credshell-confirmed:") {
                 ext_confirmed = val.trim().eq_ignore_ascii_case("true");
             }
         }
@@ -172,7 +172,7 @@ impl PasskeyListener {
                     "HTTP/1.1 204 No Content\r\n\
 Access-Control-Allow-Origin: {}\r\n\
 Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n\
-Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Kernyx-Tab-Origin, X-Kernyx-Confirmed\r\n\
+Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-CredShell-Tab-Origin, X-CredShell-Confirmed\r\n\
 Access-Control-Allow-Private-Network: true\r\n\
 Connection: close\r\n\r\n",
                     cors_origin
@@ -192,14 +192,14 @@ Connection: close\r\n\r\n",
             println!("\x1b[32m[HTTP 200]\x1b[0m Status ping successful (companion app connected)");
             let passkeys_len = vault_arc.read().unwrap().passkeys.len();
             let body = format!(
-                "{{\"status\":\"active\",\"name\":\"Kernyx\",\"passkeys\":{}}}",
+                "{{\"status\":\"active\",\"name\":\"CredShell\",\"passkeys\":{}}}",
                 passkeys_len
             );
             Self::send_json_cors(stream, 200, &body, request_origin.as_deref())?;
             return Ok(());
         }
 
-        if method == "GET" && path == "/kernyx-bridge.js" {
+        if method == "GET" && path == "/credshell-bridge.js" {
             let cors_origin = request_origin.as_deref().unwrap_or("*");
             let headers = format!(
                 "HTTP/1.1 200 OK\r\n\
@@ -350,7 +350,7 @@ Connection: close\r\n\r\n",
             true
         } else {
             let msg = format!("Create new Passkey for '{}'?\nUser: {}", rp_id, user_name);
-            native_gui_confirm("Kernyx Passkey Registration", &msg)
+            native_gui_confirm("CredShell Passkey Registration", &msg)
         };
 
         if !approved {
@@ -576,7 +576,7 @@ Connection: close\r\n\r\n",
             true
         } else {
             let msg = format!("Allow Passkey sign-in to '{}'?\nUser: {}", rp_id, user_name);
-            native_gui_confirm("Kernyx Passkey Authentication", &msg)
+            native_gui_confirm("CredShell Passkey Authentication", &msg)
         };
 
         if !approved {

@@ -1,4 +1,4 @@
-package org.kernyx.provider;
+package in.xpert0.credshell;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -32,7 +32,7 @@ public class SettingsActivity extends Activity {
         layout.setPadding(48, 64, 48, 64);
 
         TextView title = new TextView(this);
-        title.setText("🔐 Kernyx Passkey Bridge");
+        title.setText("🔐 CredShell Passkey Bridge");
         title.setTextSize(22);
         title.setPadding(0, 0, 0, 24);
         layout.addView(title);
@@ -43,7 +43,7 @@ public class SettingsActivity extends Activity {
         layout.addView(socketLabel);
 
         endpointEditText = new EditText(this);
-        endpointEditText.setText(KernyxClient.getBaseUrl(this));
+        endpointEditText.setText(CredShellClient.getBaseUrl(this));
         endpointEditText.setSingleLine(true);
         layout.addView(endpointEditText);
 
@@ -64,7 +64,7 @@ public class SettingsActivity extends Activity {
         saveTestButton.setOnClickListener(v -> {
             String url = endpointEditText.getText().toString().trim();
             if (!url.isEmpty()) {
-                KernyxClient.setBaseUrl(this, url);
+                CredShellClient.setBaseUrl(this, url);
             }
             checkConnection();
         });
@@ -98,15 +98,15 @@ public class SettingsActivity extends Activity {
     }
 
     private void checkConnection() {
-        String currentUrl = KernyxClient.getBaseUrl(this);
+        String currentUrl = CredShellClient.getBaseUrl(this);
         statusTextView.setText("Pinging " + currentUrl + "/status...");
         statusTextView.setTextColor(0xFF888888);
 
         executor.execute(() -> {
-            KernyxClient.StatusCheckResult result = KernyxClient.checkStatus(this);
+            CredShellClient.StatusCheckResult result = CredShellClient.checkStatus(this);
             mainHandler.post(() -> {
                 if (result.success) {
-                    statusTextView.setText("● Connected to Kernyx Socket!");
+                    statusTextView.setText("● Connected to CredShell Socket!");
                     statusTextView.setTextColor(0xFF00AA00);
                     detailsTextView.setText("Socket active (" + currentUrl + ")\n" + result.detail);
                 } else {

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'org.kernyx.provider'
+    namespace 'in.xpert0.credshell'
     compileSdk 36
 
     defaultConfig {
-        applicationId "org.kernyx.provider"
+        applicationId "in.xpert0.credshell"
         minSdk 28
         targetSdk 36
         versionCode 1

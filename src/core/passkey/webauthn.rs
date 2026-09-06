@@ -9,7 +9,7 @@ pub const FLAG_BACKUP_ELIGIBILITY: u8 = 0x08;
 pub const FLAG_BACKUP_STATE: u8 = 0x10;
 pub const FLAG_ATTESTED_CREDENTIAL_DATA: u8 = 0x40;
 
-pub const KERNYX_AAGUID: [u8; 16] = [0u8; 16];
+pub const CREDSHELL_AAGUID: [u8; 16] = [0u8; 16];
 
 pub fn make_registration_auth_data(
     rp_id: &str,
@@ -29,7 +29,7 @@ pub fn make_registration_auth_data(
     auth_data.extend_from_slice(&rp_id_hash);
     auth_data.push(flags);
     auth_data.extend_from_slice(&sign_count.to_be_bytes());
-    auth_data.extend_from_slice(&KERNYX_AAGUID);
+    auth_data.extend_from_slice(&CREDSHELL_AAGUID);
     auth_data.extend_from_slice(&(credential_id.len() as u16).to_be_bytes());
     auth_data.extend_from_slice(credential_id);
     let cose_key = if alg == -8 {

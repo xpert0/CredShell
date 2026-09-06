@@ -1,4 +1,4 @@
-package org.kernyx.provider;
+package in.xpert0.credshell;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,9 +13,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class KernyxClient {
+public class CredShellClient {
     public static final String DEFAULT_SOCKET_URL = "http://127.0.0.1:5209";
-    private static final String PREF_NAME = "kernyx_config";
+    private static final String PREF_NAME = "credshell_config";
     private static final String KEY_SOCKET_URL = "socket_url";
 
     public static String getBaseUrl(Context context) {
@@ -84,7 +84,7 @@ public class KernyxClient {
             }
         } catch (java.net.ConnectException ce) {
             return new StatusCheckResult(false, 0, "Connection Refused",
-                    "Cannot reach " + base + "\n• Check if 'kernyx passkey' is running in Termux\n• If running on phone, use http://127.0.0.1:5209\n• Detail: " + ce.getMessage());
+                    "Cannot reach " + base + "\n• Check if 'credshell passkey' is running in Termux\n• If running on phone, use http://127.0.0.1:5209\n• Detail: " + ce.getMessage());
         } catch (java.net.SocketTimeoutException te) {
             return new StatusCheckResult(false, 0, "Connection Timed Out",
                     "Timed out connecting to " + base + "\nCheck if Termux process is paused by battery saver.");
@@ -169,7 +169,7 @@ public class KernyxClient {
         int statusCode = conn.getResponseCode();
         InputStream is = (statusCode >= 200 && statusCode < 300) ? conn.getInputStream() : conn.getErrorStream();
         if (is == null) {
-            throw new RuntimeException("HTTP " + statusCode + " with no response from Kernyx socket");
+            throw new RuntimeException("HTTP " + statusCode + " with no response from CredShell socket");
         }
 
         StringBuilder response = new StringBuilder();
@@ -183,7 +183,7 @@ public class KernyxClient {
         if (statusCode >= 200 && statusCode < 300) {
             return response.toString();
         } else {
-            throw new RuntimeException("Kernyx error (" + statusCode + "): " + response.toString());
+            throw new RuntimeException("CredShell error (" + statusCode + "): " + response.toString());
         }
     }
 }

@@ -18,7 +18,7 @@ pub fn run_receiver(
     passphrase: &str,
     mut local_vault: Vault,
 ) -> Result<(), String> {
-    println!("Kernyx Synchronization Receiver\n");
+    println!("CredShell Synchronization Receiver\n");
     println!("Listening for incoming connections on port {}...\n", port);
     println!("IPv6 addresses:");
     println!("  [1] ::1 (Loopback)");
@@ -48,7 +48,7 @@ pub fn run_receiver(
     let ciphertext = &enc_payload[28..];
 
     let gcm = Aes256Gcm::new(&session_key);
-    let decrypted_bytes = gcm.decrypt(&nonce, b"KERNYX_SYNC_DATA", ciphertext, &tag)?;
+    let decrypted_bytes = gcm.decrypt(&nonce, b"CREDSHELL_SYNC_DATA", ciphertext, &tag)?;
     let incoming_json = String::from_utf8(decrypted_bytes)
         .map_err(|e| format!("Invalid UTF-8 in sync payload: {}", e))?;
 
@@ -66,7 +66,7 @@ pub fn run_receiver(
 
     println!("Requesting native platform authorization...");
     let approved = crate::platform::native_gui_confirm(
-        "Kernyx Vault Synchronization",
+        "CredShell Vault Synchronization",
         &format!(
             "Incoming vault synchronization from authenticated peer '{}'.\n\nApply incoming changes to local vault?",
             peer_info.device_name
@@ -96,7 +96,7 @@ pub fn run_transmitter(
     target_addr: &str,
     vault: &Vault,
 ) -> Result<(), String> {
-    println!("Kernyx Synchronization Transmitter\n");
+    println!("CredShell Synchronization Transmitter\n");
     println!("Connecting to {}...", target_addr);
 
     let mut stream = TcpStream::connect(target_addr)
@@ -113,7 +113,7 @@ pub fn run_transmitter(
             "Recipient device '{}' is not pinned in trusted devices.\nKey: {}\n\nAuthorize vault transmission to this device?",
             peer_info.device_name, hex_key
         );
-        let confirmed = crate::platform::native_gui_confirm("Kernyx Device Verification", &prompt_msg);
+        let confirmed = crate::platform::native_gui_confirm("CredShell Device Verification", &prompt_msg);
         if !confirmed {
             return Err(format!("Device trust verification declined for peer '{}'", peer_info.device_name));
         }
@@ -122,7 +122,7 @@ pub fn run_transmitter(
     let nonce = random_12()?;
     let gcm = Aes256Gcm::new(&session_key);
     let json_data = vault_to_json(vault);
-    let (ciphertext, tag) = gcm.encrypt(&nonce, b"KERNYX_SYNC_DATA", json_data.as_bytes());
+    let (ciphertext, tag) = gcm.encrypt(&nonce, b"CREDSHELL_SYNC_DATA", json_data.as_bytes());
 
     let mut payload = Vec::with_capacity(12 + 16 + ciphertext.len());
     payload.extend_from_slice(&nonce);

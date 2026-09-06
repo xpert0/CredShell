@@ -3,10 +3,10 @@ let activeModalPromise = null;
 
 function ensureShadowRoot() {
   if (shadowRoot) return shadowRoot;
-  let host = document.getElementById('kernyx-passkey-root');
+  let host = document.getElementById('credshell-passkey-root');
   if (!host) {
     host = document.createElement('div');
-    host.id = 'kernyx-passkey-root';
+    host.id = 'credshell-passkey-root';
     (document.body || document.documentElement).appendChild(host);
   }
   try {
@@ -27,11 +27,11 @@ function ensureShadowRoot() {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-    .kernyx-modal-wrapper {
+    .credshell-modal-wrapper {
       pointer-events: auto;
       perspective: 1000px;
     }
-    .kernyx-card {
+    .credshell-card {
       width: 350px;
       max-width: calc(100vw - 40px);
       box-sizing: border-box;
@@ -46,32 +46,32 @@ function ensureShadowRoot() {
         0 0 0 1px rgba(255, 255, 255, 0.08),
         0 0 35px -5px rgba(124, 58, 237, 0.28);
       color: #f1f5f9;
-      animation: kernyx-slide-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: credshell-slide-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       transform-origin: top right;
     }
-    .kernyx-card.kernyx-closing {
-      animation: kernyx-slide-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    .credshell-card.credshell-closing {
+      animation: credshell-slide-out 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @keyframes kernyx-slide-in {
+    @keyframes credshell-slide-in {
       from { opacity: 0; transform: translateY(-14px) scale(0.96); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
-    @keyframes kernyx-slide-out {
+    @keyframes credshell-slide-out {
       from { opacity: 1; transform: translateY(0) scale(1); }
       to { opacity: 0; transform: translateY(-10px) scale(0.96); }
     }
-    .kernyx-header {
+    .credshell-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 14px;
     }
-    .kernyx-brand {
+    .credshell-brand {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .kernyx-shield-icon {
+    .credshell-shield-icon {
       width: 28px;
       height: 28px;
       border-radius: 8px;
@@ -82,13 +82,13 @@ function ensureShadowRoot() {
       color: #ffffff;
       box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
     }
-    .kernyx-brand-title {
+    .credshell-brand-title {
       font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.3px;
       color: #cbd5e1;
     }
-    .kernyx-close-btn {
+    .credshell-close-btn {
       background: transparent;
       border: none;
       color: #64748b;
@@ -100,23 +100,23 @@ function ensureShadowRoot() {
       justify-content: center;
       transition: all 0.15s ease;
     }
-    .kernyx-close-btn:hover {
+    .credshell-close-btn:hover {
       color: #f1f5f9;
       background: rgba(255, 255, 255, 0.08);
     }
-    .kernyx-title {
+    .credshell-title {
       font-size: 16px;
       font-weight: 600;
       margin: 0 0 4px;
       color: #ffffff;
     }
-    .kernyx-subtitle {
+    .credshell-subtitle {
       font-size: 12px;
       color: #94a3b8;
       margin: 0 0 14px;
       line-height: 1.45;
     }
-    .kernyx-detail-box {
+    .credshell-detail-box {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
@@ -126,32 +126,32 @@ function ensureShadowRoot() {
       flex-direction: column;
       gap: 10px;
     }
-    .kernyx-detail-row {
+    .credshell-detail-row {
       display: flex;
       align-items: center;
       gap: 10px;
       font-size: 13px;
     }
-    .kernyx-detail-icon {
+    .credshell-detail-icon {
       color: #818cf8;
       display: flex;
       align-items: center;
       flex-shrink: 0;
     }
-    .kernyx-detail-label {
+    .credshell-detail-label {
       color: #64748b;
       width: 58px;
       flex-shrink: 0;
       font-size: 12px;
     }
-    .kernyx-detail-value {
+    .credshell-detail-value {
       color: #f1f5f9;
       font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .kernyx-accounts-list {
+    .credshell-accounts-list {
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -159,7 +159,7 @@ function ensureShadowRoot() {
       max-height: 160px;
       overflow-y: auto;
     }
-    .kernyx-account-item {
+    .credshell-account-item {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -170,15 +170,15 @@ function ensureShadowRoot() {
       cursor: pointer;
       transition: all 0.15s ease;
     }
-    .kernyx-account-item:hover {
+    .credshell-account-item:hover {
       background: rgba(255, 255, 255, 0.07);
       border-color: rgba(99, 102, 241, 0.3);
     }
-    .kernyx-account-item.selected {
+    .credshell-account-item.selected {
       background: rgba(99, 102, 241, 0.15);
       border-color: #6366f1;
     }
-    .kernyx-radio-circle {
+    .credshell-radio-circle {
       width: 14px;
       height: 14px;
       border-radius: 50%;
@@ -188,22 +188,22 @@ function ensureShadowRoot() {
       justify-content: center;
       flex-shrink: 0;
     }
-    .kernyx-account-item.selected .kernyx-radio-circle {
+    .credshell-account-item.selected .credshell-radio-circle {
       border-color: #818cf8;
     }
-    .kernyx-account-item.selected .kernyx-radio-circle::after {
+    .credshell-account-item.selected .credshell-radio-circle::after {
       content: '';
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: #818cf8;
     }
-    .kernyx-actions {
+    .credshell-actions {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
     }
-    .kernyx-btn-secondary {
+    .credshell-btn-secondary {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 10px;
@@ -214,11 +214,11 @@ function ensureShadowRoot() {
       cursor: pointer;
       transition: all 0.15s ease;
     }
-    .kernyx-btn-secondary:hover {
+    .credshell-btn-secondary:hover {
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
     }
-    .kernyx-btn-primary {
+    .credshell-btn-primary {
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
       border: none;
       border-radius: 10px;
@@ -233,12 +233,12 @@ function ensureShadowRoot() {
       align-items: center;
       gap: 6px;
     }
-    .kernyx-btn-primary:hover {
+    .credshell-btn-primary:hover {
       filter: brightness(1.1);
       transform: translateY(-1px);
       box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
     }
-    .kernyx-toast {
+    .credshell-toast {
       width: 320px;
       max-width: calc(100vw - 40px);
       background: rgba(18, 20, 29, 0.95);
@@ -252,10 +252,10 @@ function ensureShadowRoot() {
       align-items: center;
       gap: 10px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      animation: kernyx-slide-in 0.25s ease forwards;
+      animation: credshell-slide-in 0.25s ease forwards;
     }
-    .kernyx-toast.kernyx-closing {
-      animation: kernyx-slide-out 0.2s ease forwards;
+    .credshell-toast.credshell-closing {
+      animation: credshell-slide-out 0.2s ease forwards;
     }
   `;
   shadowRoot.appendChild(style);
@@ -271,7 +271,7 @@ function escapeHtml(str) {
 function showToast(message) {
   const root = ensureShadowRoot();
   const toast = document.createElement('div');
-  toast.className = 'kernyx-toast';
+  toast.className = 'credshell-toast';
   toast.innerHTML = `
     <div style="color: #a855f7; display: flex; align-items: center;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -282,7 +282,7 @@ function showToast(message) {
   `;
   root.appendChild(toast);
   setTimeout(() => {
-    toast.classList.add('kernyx-closing');
+    toast.classList.add('credshell-closing');
     setTimeout(() => toast.remove(), 200);
   }, 2800);
 }
@@ -294,12 +294,12 @@ function showPasskeyCreateModal({ rpId, rpName, userName, isOverwrite }) {
 
   const root = ensureShadowRoot();
   const container = document.createElement('div');
-  container.className = 'kernyx-modal-wrapper';
+  container.className = 'credshell-modal-wrapper';
 
   const titleText = isOverwrite ? 'Overwrite passkey?' : 'Save passkey?';
   const subtitleText = isOverwrite
-    ? 'A passkey for this account already exists in Kernyx. Do you want to replace it?'
-    : 'Save a passkey in your Kernyx vault for fast, passwordless sign-in.';
+    ? 'A passkey for this account already exists in CredShell. Do you want to replace it?'
+    : 'Save a passkey in your CredShell vault for fast, passwordless sign-in.';
   const confirmBtnText = isOverwrite ? 'Overwrite' : 'Save Passkey';
   const confirmBtnStyle = isOverwrite
     ? 'background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);'
@@ -312,19 +312,19 @@ function showPasskeyCreateModal({ rpId, rpName, userName, isOverwrite }) {
     : '';
 
   container.innerHTML = `
-    <div class="kernyx-card" role="dialog" aria-modal="true">
-      <div class="kernyx-header">
-        <div class="kernyx-brand">
-          <div class="kernyx-shield-icon" style="${isOverwrite ? 'background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);' : ''}">
+    <div class="credshell-card" role="dialog" aria-modal="true">
+      <div class="credshell-header">
+        <div class="credshell-brand">
+          <div class="credshell-shield-icon" style="${isOverwrite ? 'background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);' : ''}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <circle cx="12" cy="11" r="2"/>
               <path d="M12 13v3"/>
             </svg>
           </div>
-          <span class="kernyx-brand-title">Kernyx Passkey</span>
+          <span class="credshell-brand-title">CredShell Passkey</span>
         </div>
-        <button class="kernyx-close-btn" id="btn-close" aria-label="Close">
+        <button class="credshell-close-btn" id="btn-close" aria-label="Close">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
@@ -332,45 +332,45 @@ function showPasskeyCreateModal({ rpId, rpName, userName, isOverwrite }) {
         </button>
       </div>
 
-      <h2 class="kernyx-title">${escapeHtml(titleText)}</h2>
-      <p class="kernyx-subtitle">${escapeHtml(subtitleText)}</p>
+      <h2 class="credshell-title">${escapeHtml(titleText)}</h2>
+      <p class="credshell-subtitle">${escapeHtml(subtitleText)}</p>
 
       ${overwriteNotice}
 
-      <div class="kernyx-detail-box">
-        <div class="kernyx-detail-row">
-          <div class="kernyx-detail-icon">
+      <div class="credshell-detail-box">
+        <div class="credshell-detail-row">
+          <div class="credshell-detail-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </div>
-          <div class="kernyx-detail-label">Website</div>
-          <div class="kernyx-detail-value">${escapeHtml(rpId)}</div>
+          <div class="credshell-detail-label">Website</div>
+          <div class="credshell-detail-value">${escapeHtml(rpId)}</div>
         </div>
-        <div class="kernyx-detail-row">
-          <div class="kernyx-detail-icon">
+        <div class="credshell-detail-row">
+          <div class="credshell-detail-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>
           </div>
-          <div class="kernyx-detail-label">Account</div>
-          <div class="kernyx-detail-value">${escapeHtml(userName)}</div>
+          <div class="credshell-detail-label">Account</div>
+          <div class="credshell-detail-value">${escapeHtml(userName)}</div>
         </div>
-        <div class="kernyx-detail-row">
-          <div class="kernyx-detail-icon">
+        <div class="credshell-detail-row">
+          <div class="credshell-detail-icon">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             </svg>
           </div>
-          <div class="kernyx-detail-label">ID</div>
-          <div class="kernyx-detail-value">${escapeHtml(userName)}#${escapeHtml(rpId)}</div>
+          <div class="credshell-detail-label">ID</div>
+          <div class="credshell-detail-value">${escapeHtml(userName)}#${escapeHtml(rpId)}</div>
         </div>
       </div>
 
-      <div class="kernyx-actions">
-        <button class="kernyx-btn-secondary" id="btn-cancel">Cancel</button>
-        <button class="kernyx-btn-primary" id="btn-confirm" style="${confirmBtnStyle}">${escapeHtml(confirmBtnText)}</button>
+      <div class="credshell-actions">
+        <button class="credshell-btn-secondary" id="btn-cancel">Cancel</button>
+        <button class="credshell-btn-primary" id="btn-confirm" style="${confirmBtnStyle}">${escapeHtml(confirmBtnText)}</button>
       </div>
     </div>
   `;
@@ -378,7 +378,7 @@ function showPasskeyCreateModal({ rpId, rpName, userName, isOverwrite }) {
   root.appendChild(container);
 
   activeModalPromise = new Promise((resolve) => {
-    const card = container.querySelector('.kernyx-card');
+    const card = container.querySelector('.credshell-card');
     const btnCancel = container.querySelector('#btn-cancel');
     const btnClose = container.querySelector('#btn-close');
     const btnConfirm = container.querySelector('#btn-confirm');
@@ -387,7 +387,7 @@ function showPasskeyCreateModal({ rpId, rpName, userName, isOverwrite }) {
       if (approved && e && !e.isTrusted) {
         return;
       }
-      card.classList.add('kernyx-closing');
+      card.classList.add('credshell-closing');
       window.removeEventListener('keydown', onKeyDown);
       setTimeout(() => {
         container.remove();
@@ -422,15 +422,15 @@ function showPasskeyAuthModal({ rpId, accounts }) {
 
   const root = ensureShadowRoot();
   const container = document.createElement('div');
-  container.className = 'kernyx-modal-wrapper';
+  container.className = 'credshell-modal-wrapper';
 
   let selectedAccountId = accounts.length > 0 ? accounts[0].id : null;
 
   const accountsHtml = accounts.length > 1 ? `
-    <div class="kernyx-accounts-list">
+    <div class="credshell-accounts-list">
       ${accounts.map((acc, idx) => `
-        <div class="kernyx-account-item ${idx === 0 ? 'selected' : ''}" data-id="${escapeHtml(acc.id)}">
-          <div class="kernyx-radio-circle"></div>
+        <div class="credshell-account-item ${idx === 0 ? 'selected' : ''}" data-id="${escapeHtml(acc.id)}">
+          <div class="credshell-radio-circle"></div>
           <div style="flex: 1; overflow: hidden;">
             <div style="font-weight: 500; font-size: 13px; color: #f1f5f9; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
               ${escapeHtml(acc.user_name || 'Passkey User')}
@@ -441,43 +441,43 @@ function showPasskeyAuthModal({ rpId, accounts }) {
       `).join('')}
     </div>
   ` : (accounts.length === 1 ? `
-    <div class="kernyx-detail-box">
-      <div class="kernyx-detail-row">
-        <div class="kernyx-detail-icon">
+    <div class="credshell-detail-box">
+      <div class="credshell-detail-row">
+        <div class="credshell-detail-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
           </svg>
         </div>
-        <div class="kernyx-detail-label">Account</div>
-        <div class="kernyx-detail-value">${escapeHtml(accounts[0].user_name || 'Passkey User')}</div>
+        <div class="credshell-detail-label">Account</div>
+        <div class="credshell-detail-value">${escapeHtml(accounts[0].user_name || 'Passkey User')}</div>
       </div>
-      <div class="kernyx-detail-row">
-        <div class="kernyx-detail-icon">
+      <div class="credshell-detail-row">
+        <div class="credshell-detail-icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
           </svg>
         </div>
-        <div class="kernyx-detail-label">Website</div>
-        <div class="kernyx-detail-value">${escapeHtml(rpId)}</div>
+        <div class="credshell-detail-label">Website</div>
+        <div class="credshell-detail-value">${escapeHtml(rpId)}</div>
       </div>
     </div>
   ` : '');
 
   container.innerHTML = `
-    <div class="kernyx-card" role="dialog" aria-modal="true">
-      <div class="kernyx-header">
-        <div class="kernyx-brand">
-          <div class="kernyx-shield-icon">
+    <div class="credshell-card" role="dialog" aria-modal="true">
+      <div class="credshell-header">
+        <div class="credshell-brand">
+          <div class="credshell-shield-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <circle cx="12" cy="11" r="2"/>
               <path d="M12 13v3"/>
             </svg>
           </div>
-          <span class="kernyx-brand-title">Kernyx Passkey</span>
+          <span class="credshell-brand-title">CredShell Passkey</span>
         </div>
-        <button class="kernyx-close-btn" id="btn-close" aria-label="Close">
+        <button class="credshell-close-btn" id="btn-close" aria-label="Close">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
@@ -485,14 +485,14 @@ function showPasskeyAuthModal({ rpId, accounts }) {
         </button>
       </div>
 
-      <h2 class="kernyx-title">Sign in with passkey</h2>
-      ${accounts.length === 1 ? `<p class="kernyx-subtitle">Sign in instantly using your stored passkey.</p>` : ''}
+      <h2 class="credshell-title">Sign in with passkey</h2>
+      ${accounts.length === 1 ? `<p class="credshell-subtitle">Sign in instantly using your stored passkey.</p>` : ''}
 
       ${accountsHtml}
 
-      <div class="kernyx-actions">
-        <button class="kernyx-btn-secondary" id="btn-cancel">Cancel</button>
-        <button class="kernyx-btn-primary" id="btn-confirm">Sign In</button>
+      <div class="credshell-actions">
+        <button class="credshell-btn-secondary" id="btn-cancel">Cancel</button>
+        <button class="credshell-btn-primary" id="btn-confirm">Sign In</button>
       </div>
     </div>
   `;
@@ -500,12 +500,12 @@ function showPasskeyAuthModal({ rpId, accounts }) {
   root.appendChild(container);
 
   activeModalPromise = new Promise((resolve) => {
-    const card = container.querySelector('.kernyx-card');
+    const card = container.querySelector('.credshell-card');
     const btnCancel = container.querySelector('#btn-cancel');
     const btnClose = container.querySelector('#btn-close');
     const btnConfirm = container.querySelector('#btn-confirm');
 
-    const accItems = container.querySelectorAll('.kernyx-account-item');
+    const accItems = container.querySelectorAll('.credshell-account-item');
     accItems.forEach(item => {
       item.addEventListener('click', (e) => {
         if (!e.isTrusted) return;
@@ -519,7 +519,7 @@ function showPasskeyAuthModal({ rpId, accounts }) {
       if (approved && e && !e.isTrusted) {
         return;
       }
-      card.classList.add('kernyx-closing');
+      card.classList.add('credshell-closing');
       window.removeEventListener('keydown', onKeyDown);
       setTimeout(() => {
         container.remove();
@@ -558,14 +558,14 @@ function sendToBackground(action, payload, user_confirmed = false) {
       if (response && response.success) {
         resolve(response.data);
       } else {
-        reject(new Error(response ? response.error : 'Failed to communicate with Kernyx'));
+        reject(new Error(response ? response.error : 'Failed to communicate with CredShell'));
       }
     });
   });
 }
 
 window.addEventListener('message', async (event) => {
-  if (event.source !== window || !event.data || event.data.target !== 'kernyx-content-bridge') {
+  if (event.source !== window || !event.data || event.data.target !== 'credshell-content-bridge') {
     return;
   }
 
@@ -584,7 +584,7 @@ window.addEventListener('message', async (event) => {
   try {
     if (action === 'check_status' || action === 'webauthn_query') {
       const data = await sendToBackground(action, payload, false);
-      window.postMessage({ target: 'kernyx-page-hook', id, success: true, data }, targetOrigin);
+      window.postMessage({ target: 'credshell-page-hook', id, success: true, data }, targetOrigin);
       return;
     }
 
@@ -602,7 +602,7 @@ window.addEventListener('message', async (event) => {
       const approved = await showPasskeyCreateModal({ rpId, rpName, userName, isOverwrite });
       if (!approved) {
         window.postMessage({
-          target: 'kernyx-page-hook',
+          target: 'credshell-page-hook',
           id,
           success: false,
           error: 'User cancelled the passkey creation'
@@ -611,7 +611,7 @@ window.addEventListener('message', async (event) => {
       }
 
       const data = await sendToBackground('webauthn_create', payload, true);
-      window.postMessage({ target: 'kernyx-page-hook', id, success: true, data }, targetOrigin);
+      window.postMessage({ target: 'credshell-page-hook', id, success: true, data }, targetOrigin);
       return;
     }
 
@@ -629,7 +629,7 @@ window.addEventListener('message', async (event) => {
 
       if (payload.mediation === 'conditional') {
         window.postMessage({
-          target: 'kernyx-page-hook',
+          target: 'credshell-page-hook',
           id,
           success: false,
           error: 'Conditional mediation passkey not selected'
@@ -638,12 +638,12 @@ window.addEventListener('message', async (event) => {
       }
 
       if (accounts.length === 0) {
-        showToast(`No passkey found for ${rpId} in Kernyx vault`);
+        showToast(`No passkey found for ${rpId} in CredShell vault`);
         window.postMessage({
-          target: 'kernyx-page-hook',
+          target: 'credshell-page-hook',
           id,
           success: false,
-          error: `No passkey found for ${rpId} in Kernyx vault`
+          error: `No passkey found for ${rpId} in CredShell vault`
         }, targetOrigin);
         return;
       }
@@ -651,7 +651,7 @@ window.addEventListener('message', async (event) => {
       const modalResult = await showPasskeyAuthModal({ rpId, accounts });
       if (!modalResult.approved) {
         window.postMessage({
-          target: 'kernyx-page-hook',
+          target: 'credshell-page-hook',
           id,
           success: false,
           error: 'User cancelled the passkey request'
@@ -661,14 +661,14 @@ window.addEventListener('message', async (event) => {
 
       payload.selected_credential_id = modalResult.selectedId;
       const data = await sendToBackground('webauthn_get', payload, true);
-      window.postMessage({ target: 'kernyx-page-hook', id, success: true, data }, targetOrigin);
+      window.postMessage({ target: 'credshell-page-hook', id, success: true, data }, targetOrigin);
       return;
     }
 
     throw new Error(`Unknown action: ${action}`);
   } catch (err) {
     window.postMessage({
-      target: 'kernyx-page-hook',
+      target: 'credshell-page-hook',
       id,
       success: false,
       error: err.message || 'Operation failed'
