@@ -14,8 +14,6 @@ use std::path::Path;
 
 pub const DEFAULT_PASSKEY_PORT: u16 = 5209;
 
-pub const EMBEDDED_BRIDGE_JS: &str = include_str!("../../../gui/credshell-bridge.js");
-
 
 fn is_allowed_origin(origin: &str) -> bool {
     let clean = origin.trim_end_matches('/');
@@ -196,24 +194,6 @@ Connection: close\r\n\r\n",
                 passkeys_len
             );
             Self::send_json_cors(stream, 200, &body, request_origin.as_deref())?;
-            return Ok(());
-        }
-
-        if method == "GET" && path == "/credshell-bridge.js" {
-            let cors_origin = request_origin.as_deref().unwrap_or("*");
-            let headers = format!(
-                "HTTP/1.1 200 OK\r\n\
-Content-Type: application/javascript; charset=utf-8\r\n\
-Access-Control-Allow-Origin: {}\r\n\
-Content-Length: {}\r\n\
-Connection: close\r\n\r\n",
-                cors_origin,
-                EMBEDDED_BRIDGE_JS.len()
-            );
-            stream.write_all(headers.as_bytes()).map_err(|e| e.to_string())?;
-            stream.write_all(EMBEDDED_BRIDGE_JS.as_bytes()).map_err(|e| e.to_string())?;
-            stream.flush().map_err(|e| e.to_string())?;
-            let _ = stream.shutdown(std::net::Shutdown::Both);
             return Ok(());
         }
 
